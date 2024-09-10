@@ -6,25 +6,14 @@
  * - espera 0.1 con los nixie apagados
  * - muestra en el nixie los 2 digitos de los minutos actuales durante 0.9segundos
  * - espera 0.1 con los nixie apagados
- * al mantener presionado el boton de "ver hora" durante mas de 1segundo. se activa el ver bateria
- * - El sistema mide la tensión de la batería a través de un ADC y muestra el porcentaje de carga en un rango del 0% al 99% durante 1.5 segundos.
+ * al mantener presionado el boton de "ver hora" durante 1segundo. se activa el cronometro
+ * - el cronometro inicia en 1segundo, finaliza cuando se presiona nuevamente el boton "ver hora"
+ * - mientras esta activado el cronometro cuenta los segundos de 0 a 99
 */
 
 
-#include <Arduino.h>
 
-
-#if defined(__AVR_ATtiny13__)  // Código específico para ATtiny13A
-    #include <TinyI2C.h>  //lib_deps = https://github.com/technoblogy/tiny-i2c 
-
-#elif defined(__AVR_ATtiny85__)  // Código específico para ATtiny85
     #include <TinyWireM.h>  //lib_deps = TinyWireM 
-
-#elif defined(__AVR_ATmega328P__)  // Código específico para ATmega328P
-    #include <Wire.h>  // Librería Wire estándar para ATmega328P
-#else
-    #error "Microcontrolador no soportado"
-#endif
 
 
 // definicion de pines ATtiny85

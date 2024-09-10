@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
 <WORKSPACE>
  <FRAME activewindow="0">
-  <PLACEMENT>2c0000000000000001000000ffffffffffffffffffffffffffffffff35040000d0000000a80900000b050000</PLACEMENT>
+  <PLACEMENT>2c0000000000000001000000fffffffffffffffffffffffffffffffffb03000056010000a80900000b050000</PLACEMENT>
   <WINDOW type="default" module="ISIS"/>
  </FRAME>
  <MODULE name="VSMDEBUG">
@@ -31,7 +31,7 @@
      <ITEM name="nItems">0</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="418" x="1366" flags="00000008" y="494" h="419" pid="3" iid="1">
+   <POPUP w="226" x="1366" flags="00000008" y="494" h="215" pid="3" iid="1">
     <PROPERTIES/>
    </POPUP>
    <POPUP w="8" x="1386" flags="0000000a" y="514" h="1" pid="10" iid="1">
@@ -64,7 +64,7 @@
      <ITEM name="TopLineAddress">00000000</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="16" x="1446" flags="80000000" y="574" h="32" pid="14" iid="1">
+   <POPUP w="16" x="1446" flags="00000000" y="574" h="32" pid="14" iid="1">
     <PROPERTIES>
      <ITEM name="DataType">2</ITEM>
      <ITEM name="DispChars">Yes</ITEM>
@@ -108,7 +108,7 @@
      <ITEM name="DISPOPCODES">No</ITEM>
      <ITEM name="FIXUPBPTS">Yes</ITEM>
      <ITEM name="WordsOnly">No</ITEM>
-     <ITEM name="nBreakpoints">3</ITEM>
+     <ITEM name="nBreakpoints">0</ITEM>
     </PROPERTIES>
    </POPUP>
    <POPUP w="300" x="2031" flags="0000000b" y="619" h="599" pid="2" iid="1">
@@ -128,7 +128,7 @@
      <ITEM name="nItems">0</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="288" x="1482" flags="00008001" y="477" h="120" pid="1" iid="3">
+   <POPUP w="156" x="1399" flags="00008001" y="498" h="72" pid="1" iid="3">
     <PROPERTIES/>
    </POPUP>
    <POPUP w="8" x="1566" flags="00000008" y="694" h="2" pid="2" iid="3">
