@@ -10,7 +10,7 @@
    - A continuación, se muestran los dos dígitos de los minutos actuales por **0.9 segundos**.
    - Finalmente, los tubos Nixie se apagan nuevamente por **0.1 segundos**.
 
-2. **Estado de la Batería**:
+2. **Estado de la Batería *(unstable)***:
    - Al mantener presionado el botón "Ver Hora" durante **1 segundo**, se activa la lectura de la batería.
    - El sistema mide la tensión de la batería a través de un ADC y muestra el porcentaje de carga en un rango del 0% al 99% durante **1.5 segundos**.
 
@@ -70,7 +70,8 @@ Aquí está la nueva sección ordenada para agregar al final de tu `README.md`:
 - El archivo de simulación incluye los siguientes componentes conectados:
   - Microcontrolador **ATtiny85**
   - RTC **RCF8563**
-  - **Pulsador**
+  - **Pulsador** boton general
+  - **switch** para simular fallo de RTC
   - **Contador de clocks** que simula los tubos Nixie
 
 - Diagrama general de conexiones de la simulación:
