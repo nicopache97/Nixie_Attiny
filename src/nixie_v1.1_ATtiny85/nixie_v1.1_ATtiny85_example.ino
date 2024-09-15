@@ -1,30 +1,12 @@
 
 // ING Nico Pacheco : 31-08-2024, optimizado 07-09-2024 ATtiny85
 /* funcionalidad:
- * al presionar el boton de "ver hora" se activa la secuencia para ver la hora
- * - muestra en el nixie los 2 digitos de la hora actual durante 0.9segundos
- * - espera 0.1 con los nixie apagados
- * - muestra en el nixie los 2 digitos de los minutos actuales durante 0.9segundos
- * - espera 0.1 con los nixie apagados
- * al mantener presionado el boton de "ver hora" durante mas de 1segundo. se activa el ver bateria
- * - El sistema mide la tensión de la batería a través de un ADC y muestra el porcentaje de carga en un rango del 0% al 99% durante 1.5 segundos.
+  //  Ejemplo envia 1 pulso cada 1/2 segundo, habilita y deshabilita al presionar el pulsador (con antirrebote de 50ms)
 */
 
 
-#include <Arduino.h>
 
-
-#if defined(__AVR_ATtiny13__)  // Código específico para ATtiny13A
-    #include <TinyI2C.h>  //lib_deps = https://github.com/technoblogy/tiny-i2c 
-
-#elif defined(__AVR_ATtiny85__)  // Código específico para ATtiny85
     #include <TinyWireM.h>  //lib_deps = TinyWireM 
-
-#elif defined(__AVR_ATmega328P__)  // Código específico para ATmega328P
-    #include <Wire.h>  // Librería Wire estándar para ATmega328P
-#else
-    #error "Microcontrolador no soportado"
-#endif
 
 
 // definicion de pines ATtiny85
@@ -33,7 +15,7 @@
 #define Pin_Nixie_data    4 //B4 pin fisico 3
 // pin fisico 4 = GND
 #define SDA 0               //   pin fisico 5 = SDA
-#define Pin_VerHS         1 //B1 pin fisico 6 = pulsador
+#define Pin_VerHS         1 //B1 pin fisico 6
 #define SCL 2               //   pin fisico 7 = SCL
 // pin fisico 8 = VCC
 
@@ -56,19 +38,21 @@
 #define PCF8563_ADDR 0x51 // constante identificador PCF8563
 
 // variables privadas libreria NIXIE
-    uint32_t time_press;
+    uint8_t contador_pulsos=0;
+    uint32_t time_press=millis();
 
 // Prototipos de Funciones
 void nixie_prendido();
 void nixie_apagado();
 void nixie_numero(uint8_t numero);
 void enviar_pulsos(uint8_t pulsos);
-uint8_t porcentajeBateria();
+int porcentajeBateria();
 
 
 bool RTC_BEGIN(){
     TinyWireM.begin(); // join i2c bus
 	//TinyWireM.setClock(400000); //Optional - set I2C SCL to Low Speed Mode of 400kHz
+
     TinyWireM.beginTransmission (PCF8563_ADDR);
     return (TinyWireM.endTransmission() == 0 ?  true : false);
 }
@@ -119,7 +103,7 @@ uint8_t RTC_getMinutes(){
 
 // ****** SETUP *****
 void setup() {
-  delay(100);
+  delay(1000);
   RTC_BEGIN();
 
       //configuracion de pines
@@ -134,51 +118,60 @@ void setup() {
  }
 
   nixie_apagado();
-  time_press=millis(); // inicializa la variable
+
 }
 
-
+bool mode=1; //prendido
+long time_pulso;
 void loop() {
+  //  Ejemplo envia 1 pulso cada 1/2 segundo, habilita y deshabilita al presionar el pulsador (con antirrebote de 50ms)
   if(digitalRead(Pin_VerHS)){
-    if( (millis()-time_press>10) && ((millis()-time_press<1000)) ){ // si se presiona "verHS" durante menos de 1seg
-      // prende NIXIE      +       Muentra la hora       +    espera un momento y luego apaga
-      nixie_prendido();    enviar_pulsos(RTC_getHours());   delay(time_prendido_hs);
-      nixie_apagado();        delay(time_intermedio);
-      // prende NIXIE      +       Muentra los minutos   +    espera un momento y luego apaga
-      nixie_prendido();    enviar_pulsos(RTC_getMinutes()); delay(time_prendido_min);
-      nixie_apagado();        delay(time_intermedio);
-
-    }else if(millis()-time_press>1000){ // si se presiona durante mas de 1segundo "verHS"
-      // prende NIXIE     +    Muentra porcentaje bateria      +    espera un momento y luego apaga
-      nixie_prendido();    enviar_pulsos(porcentajeBateria());   delay(time_prendido_bateria);
-      nixie_apagado();        delay(time_intermedio);
+    if( (millis()-time_press>50)){
+      mode=!mode;
+      time_pulso=millis();
     }
-  time_press=millis(); // mientras no se presione, se actualiza el tiempo
+    time_press=millis(); // mientras no se presione, se actualiza el tiempo
   }
-  
+  if( (mode) && (millis()-time_pulso>500) ){// si esta habilitado contar, y paso 1 segundo
+    nixie_prendido();    enviar_pulsos(1); time_pulso=millis();
+  }
+  if(!mode){
+    nixie_apagado();
+  }
 }
 
 // funciones
 void nixie_prendido(){
   digitalWrite(Pin_Nixie_Enable,HIGH);
+  contador_pulsos=0;
 }
 
 void nixie_apagado(){
   digitalWrite(Pin_Nixie_Enable,LOW);
 }
 
+// ingresa numero calcula la cantidad de pulsos faltantes
+void nixie_numero(uint8_t numero){
+  if(numero>=contador_pulsos){
+      enviar_pulsos(numero-contador_pulsos);
+  }else{
+      enviar_pulsos(numero+100-contador_pulsos);
+  }
+}
+
 // ingresa el numero de pulsos que requiere
 void enviar_pulsos(uint8_t pulsos){
   while(pulsos>0){
+    delay(1);
     digitalWrite(Pin_Nixie_data,HIGH);
     digitalWrite(Pin_Nixie_data,LOW);
     pulsos--;
   }
 }
 
-uint8_t porcentajeBateria() {
+int porcentajeBateria() {
   pinMode(Pin_Bateri_ADC, INPUT);
-  uint16_t valor_ADC = analogRead(Pin_Bateri_ADC);
+  int valor_ADC = analogRead(Pin_Bateri_ADC);
   if(valor_ADC<Vmin_ADC) valor_ADC=Vmin_ADC; //Vmin_ADC = (3.0/4.2)*1024
-  return map(valor_ADC, Vmin_ADC, 1023, 0, 99);
+  return map(valor_ADC, Vmin_ADC, 1023, 0, 100);
 }

@@ -59,6 +59,7 @@ int porcentajeBateria();
 bool RTC_BEGIN(){
     TinyWireM.begin(); // join i2c bus
 	//TinyWireM.setClock(400000); //Optional - set I2C SCL to Low Speed Mode of 400kHz
+
     TinyWireM.beginTransmission (PCF8563_ADDR);
     return (TinyWireM.endTransmission() == 0 ?  true : false);
 }
@@ -109,7 +110,7 @@ uint8_t RTC_getMinutes(){
 
 // ****** SETUP *****
 void setup() {
-  delay(100);
+  delay(1000);
   RTC_BEGIN();
 
       //configuracion de pines
@@ -124,33 +125,37 @@ void setup() {
  }
 
   nixie_apagado();
+  time_press=millis(); // inicializa la variable
 }
 
-
 void loop() {
+
   if(digitalRead(Pin_VerHS)){
     if( (millis()-time_press>10) && ((millis()-time_press<1000)) ){ // si se presiona "verHS" durante menos de 1seg
+      // prende NIXIE      +       Muentra la hora       +    espera un momento y luego apaga
       nixie_prendido();    enviar_pulsos(RTC_getHours());   delay(time_prendido_hs);
       nixie_apagado();        delay(time_intermedio);
+      // prende NIXIE      +       Muentra los minutos   +    espera un momento y luego apaga
       nixie_prendido();    enviar_pulsos(RTC_getMinutes()); delay(time_prendido_min);
       nixie_apagado();        delay(time_intermedio);
+
     }else if(millis()-time_press>1000){ // si se presiona durante mas de 1segundo "verHS"
+      // prende NIXIE     +    Muentra porcentaje bateria      +    espera un momento y luego apaga
       nixie_prendido();    enviar_pulsos(porcentajeBateria());   delay(time_prendido_bateria);
       nixie_apagado();        delay(time_intermedio);
     }
   time_press=millis(); // mientras no se presione, se actualiza el tiempo
   }
-  
 }
 
 // funciones
 void nixie_prendido(){
-  digitalWrite(Pin_Nixie_Enable,LOW);
+  digitalWrite(Pin_Nixie_Enable,HIGH);
   contador_pulsos=0;
 }
 
 void nixie_apagado(){
-  digitalWrite(Pin_Nixie_Enable,HIGH);
+  digitalWrite(Pin_Nixie_Enable,LOW);
 }
 
 // ingresa numero calcula la cantidad de pulsos faltantes
@@ -161,9 +166,11 @@ void nixie_numero(uint8_t numero){
       enviar_pulsos(numero+100-contador_pulsos);
   }
 }
+
 // ingresa el numero de pulsos que requiere
 void enviar_pulsos(uint8_t pulsos){
   while(pulsos>0){
+    delay(1);
     digitalWrite(Pin_Nixie_data,HIGH);
     digitalWrite(Pin_Nixie_data,LOW);
     pulsos--;

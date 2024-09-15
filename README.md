@@ -53,8 +53,6 @@
    -  **Programa** > **Subir Usando Programador**
 > NO USAR EL BOTON DE SUBIR PROGRAMA CLASICO
 
-Aquí está la nueva sección ordenada para agregar al final de tu `README.md`:
-
 ---
 
 ### Cómo Ver la Simulación
@@ -82,4 +80,13 @@ Aquí está la nueva sección ordenada para agregar al final de tu `README.md`:
 - Se recomienda configurar el **contador de clocks** de la siguiente manera para que funcione como controlador Nixie:
   ![Configuración de simulación del display NIXI](img/simulacion_configuracion_contador_CLK.png)
 
+- Medicio de periodo de los **pulsos** generados por el ATtiny85
+   ![Medicion de pulsos con osiloscopio en simulacion proteus](img/simulacion_pulsos_ATtiny85_CLK.png)
+
 ---
+
+### Notas adicionales :
+- Al medir la señal de salida en el simulador se corrobora que la señal de clock generada para comunicar el contador a los CD4017 esta dentro de los valores aceptables. La frecuencia generada es de 38KHZ, y el CD4017 maneja hasta 2.5MHZ trabajando a con tension.
+- Al subir el programa puede encontrar algunos errores tipicos de la placa personalizada, recomendacion ejecutar el ARDUINO IDE como administrador, intentar subir el bootloader y luego subir el programa con el programador. Esta secuencia de pasos demostro ser la unica efectiva en la experiencia (posiblemente por algun tipo de defecto en ATtiny85 espesifico utilizado)
+- La medicion de bateria solo funciona en ATmega328p
+> al usar la libreria Wire en ATmega328p, se usa interrupciones, si el I2C no tiene pull-up, o se cortocicuita a tierra, el microcontrolador quedara bloqueado en espera de los pulsos de respuesta en la comunicacion con PCF8563
