@@ -81,7 +81,7 @@
 - Se recomienda configurar el **contador de clocks** de la siguiente manera para que funcione como controlador Nixie:
   ![Configuración de simulación del display NIXI](img/simulacion_configuracion_contador_CLK.png)
 
-- Medicio de periodo de los **pulsos** generados por el ATtiny85
+- Medicion de periodo de los **pulsos** generados por el ATtiny85
    ![Medicion de pulsos con osiloscopio en simulacion proteus](img/simulacion_pulsos_ATtiny85_CLK.png)
 
 ---
